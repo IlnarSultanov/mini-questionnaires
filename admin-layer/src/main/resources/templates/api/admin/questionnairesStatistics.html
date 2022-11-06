@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <title>Отчеты</title>
+  <meta http-equiv="Content-Type"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+  <link rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous"/>
+  <link th:href="@{/styles/style.css}" rel="stylesheet"/>
+</head>
+
+<body>
+<div class="container">
+  <a th:href="@{/api/admin/profile}"
+     class="btn btn-secondary btn-outline-dark mt-2 pl-4 pr-4">
+    ← В профиль
+  </a>
+  <hr/>
+  <h2>Отчеты по всем анкетам</h2>
+  <hr/>
+  <h4 th:if="${questionnaires.isEmpty()}" class="text-secondary mt-4 mb-4">Анкет пока нет</h4>
+  <table th:if="${!questionnaires.isEmpty()}" class="table table-bordered table-striped" >
+    <thead class="thead-dark">
+    <tr>
+      <th>№</th>
+      <th class="questionnaireTitle">Название анкеты</th>
+      <th class="actionTitle">Действие</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="questionnaire : ${questionnaires}">
+      <td th:text="${questionnaire.getId()}"></td>
+      <td class="questionnaireTitle" th:text="${questionnaire.getTitle()}"></td>
+      <td class="actionTitle">
+        <a th:href="@{/api/admin/showConcreteQuestionnaireStatistic(questionnaire_id=${questionnaire.getId()})}"
+           class="btn btn-outline-info btn-sm maxWidth">
+          Посмотреть результаты пользователей
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>
+</body>
+</html>

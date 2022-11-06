@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <title>Пользователи</title>
+  <meta http-equiv="Content-Type"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+  <link rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous"/>
+  <link th:href="@{/styles/style.css}" rel="stylesheet"/>
+</head>
+
+<body>
+<div class="container">
+  <a th:href="@{/api/admin/profile}"
+     class="btn btn-secondary btn-outline-dark mt-2 pl-4 pr-4">
+    ← В профиль
+  </a>
+  <hr/>
+  <h2>Пользователи, заполнившие анкету "<span th:text="${questionnaireApiData.title}"></span>"</h2>
+  <hr/>
+  <h4 th:if="${usersApiData.isEmpty()}" class="text-secondary mt-4 mb-4">Пока никто не заполнил анкету</h4>
+  <table th:if="${!usersApiData.isEmpty()}" class="table table-bordered table-striped" >
+    <thead class="thead-dark">
+    <tr>
+      <th>ID</th>
+      <th>Почта</th>
+      <th>Фамилия</th>
+      <th>Имя</th>
+      <th>Отчество</th>
+      <th>Действие</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="user : ${usersApiData}">
+      <td th:text="${user.getId()}"></td>
+      <td th:text="${user.getEmail()}"></td>
+      <td th:text="${user.getSurname()}"></td>
+      <td th:text="${user.getName()}"></td>
+      <td th:text="${user.getPatronymic()}"></td>
+      <td>
+        <a th:href="@{/api/admin/showResultsOfCompletingQuestionnaireByUser(
+        user_id=${user.getId()}, questionnaire_id=${questionnaireApiData.getId()})}"
+           class="btn btn-outline-info btn-sm maxWidth">
+          Посмотреть ответы
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>
+</body>
+</html>

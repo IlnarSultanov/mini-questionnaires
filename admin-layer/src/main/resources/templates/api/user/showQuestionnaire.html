@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <title>Прохождение анкеты</title>
+  <meta http-equiv="Content-Type"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+  <link rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous"/>
+  <link th:href="@{/styles/style.css}" rel="stylesheet"/>
+</head>
+
+<body>
+<div class="container">
+  <a th:if="${userRole.equals('ROLE_ADMIN')}" th:href="@{/api/admin/profile}"
+     class="btn btn-secondary btn-outline-dark mt-2 pl-4 pr-4">
+    ← В профиль
+  </a>
+  <a th:if="${userRole.equals('ROLE_USER')}" th:href="@{/api/user/profile}"
+     class="btn btn-secondary btn-outline-dark mt-2 pl-4 pr-4">
+    ← В профиль
+  </a>
+  <hr/>
+  <h2 id="centered">Прохождение анкеты "<span th:text="${questionnaireApiData.title}"></span>"</h2>
+  <hr/>
+
+  <form th:action="@{/api/user/saveAnswersFromQuestionnaire}" th:model="${questionnaireParts}"
+        method="POST">
+
+    <table class="table table-bordered thread-light table-striped col-12">
+      <tbody>
+        <div th:each="answer, answerStat : ${questionnaireParts.answersOnQuestionsApiData}">
+          <tr>
+            <td id="questionLabel" th:text="${answer.questionApiData.questionText}"></td>
+
+            <input type="hidden" th:value="${answer.id}"
+                   th:field="*{questionnaireParts.answersOnQuestionsApiData[__${answerStat.index}__].id}">
+            <input type="hidden" th:value="${answer.questionApiData.questionText}"
+                   th:field="*{questionnaireParts.answersOnQuestionsApiData[__${answerStat.index}__].questionApiData.questionText}">
+            <input type="hidden" th:value="${answer.questionApiData.id}"
+                   th:field="*{questionnaireParts.answersOnQuestionsApiData[__${answerStat.index}__].questionApiData.id}">
+          </tr>
+
+          <tr>
+            <td>
+              <div class="custom-control custom-radio"
+                   th:each="answerForQuestion, answerForQuestionStat : ${questionnaireParts.answersForQuestions}"
+                   th:if = "${answerForQuestion.questionId == answer.questionApiData.id}">
+
+                  <input th:if="${answer.questionApiData.numberOfChoices.name().equals('ONE')}"
+                         type="radio" required th:id="${answerForQuestion.id}"
+                         th:value="${answerForQuestion.id}"
+                         th:field="*{questionnaireParts.answersOnQuestionsApiData[__${answerStat.index}__].answersForQuestionApiData[0].id}">
+
+                  <input th:if="${answer.questionApiData.numberOfChoices.name().equals('MANY')}"
+                         type="checkbox" th:id="${answerForQuestion.id}"
+                         th:value="${answerForQuestion.id}"
+                         th:field="*{questionnaireParts.answersOnQuestionsApiData[__${answerStat.index}__].answersForQuestionApiData[__${answerForQuestionStat.index}__].id}">
+                  <label id="answerText" th:for="${answerForQuestion.id}" th:text="${answerForQuestion.answerText}"></label>
+              </div>
+            </td>
+          </tr>
+
+        </div>
+      </tbody>
+    </table>
+
+    <button type="submit" class="btn centered btn-success my-4 col-12">Сохранить ответы</button>
+
+  </form>
+
+</div>
+</body>
+</html>

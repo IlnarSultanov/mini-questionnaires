@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <title>Редактирование анкеты</title>
+  <meta http-equiv="Content-Type">
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+  <link rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+  <link th:href="@{/styles/style.css}" rel="stylesheet" />
+</head>
+
+<body>
+<div class="container">
+  <a th:href="@{/api/admin/profile}"
+     class="btn btn-secondary btn-outline-dark mt-2 pl-4 pr-4">
+    ← В профиль
+  </a>
+  <hr>
+  <h3 id="centeredContent">Редактирование анкеты</h3>
+  <hr>
+  <p th:if="${isErrorOccurred}" class="alert alert-danger col-xl-4">Произошла ошибка</p>
+  <form th:action="@{/api/admin/updateQuestionnaire}" th:object="${completedUpdateQuestionnaire}"
+        method="POST" id="centered">
+
+    <input type="hidden" th:field="*{updatedQuestionnaire.id}"/>
+
+    <label for="questionnaire" id="titleQuestionnaire">Название анкеты</label>
+    <br/>
+    <input id="questionnaire" type="text" required th:field="*{updatedQuestionnaire.title}"
+           class="form-control mb-md-2 col-6" placeholder="Текст названия"/>
+
+    <p th:if="${#fields.hasErrors('updatedQuestionnaire.title')}"
+       th:errorclass="errorInput" th:errors="*{updatedQuestionnaire.title}">Invalid title</p>
+    <div th:if="${#fields.hasErrors('global')}">
+      <p th:each="err : ${#fields.errors('global')}"
+         th:text="${err}" class="globalErrorInput">Global error</p>
+    </div>
+    <br/>
+
+    <table class="table table-bordered table-striped thead-light col-6">
+      <tbody>
+      <div th:each="questionWithAnswers, questionWithAnswersStat : ${completedUpdateQuestionnaire.updatedQuestionWithAnswersList}">
+          <input type="hidden"
+                 th:field="*{updatedQuestionWithAnswersList[__${questionWithAnswersStat.index}__].updateQuestionDto.id}"/>
+        <tr>
+          <td id="updateQuestionColumn">
+            <label for="questionText">Вопрос <span th:text="${questionWithAnswersStat.index + 1}"></span></label>
+            <br/>
+            <input id="questionText" type="text" class="form-control-update mb-md-2 col-11"
+                   placeholder="Текст вопроса" required
+                   th:field="*{updatedQuestionWithAnswersList[__${questionWithAnswersStat.index}__].updateQuestionDto.questionText}"/>
+
+            <a th:href="@{/api/admin/deleteQuestion(question_id=${questionWithAnswers.getUpdateQuestionDto().getId()},
+             questionnaire_id=${completedUpdateQuestionnaire.getUpdatedQuestionnaire().getId()})}"
+                    class="btn btn-sm btn-outline-danger py-1 px-2 btnDelete">
+              ╳
+            </a>
+          </td>
+        </tr>
+
+        <div th:each="answer, answerStat : ${questionWithAnswers.updateAnswerForQuestionDtoList}">
+            <input type="hidden"
+                   th:field="*{updatedQuestionWithAnswersList[__${questionWithAnswersStat.index}__].updateAnswerForQuestionDtoList[__${answerStat.index}__].id}"/>
+          <tr>
+            <td>
+              <label for="answer">Ответ <span th:text="${answerStat.index + 1}"></span></label>
+              <br/>
+              <input id="answer" type="text" th:value="${answer.answerText}" required
+                     class="form-control-update mb-md-2 col-11" placeholder="Текст ответа"
+                     th:field="*{updatedQuestionWithAnswersList[__${questionWithAnswersStat.index}__].updateAnswerForQuestionDtoList[__${answerStat.index}__].answerText}"/>
+
+              <a th:href="@{/api/admin/deleteAnswerForQuestion(answerForQuestion_id=${answer.getId()},
+              questionnaire_id=${completedUpdateQuestionnaire.getUpdatedQuestionnaire().getId()})}"
+                      class="btn btn-sm btn-outline-danger py-1 px-2 btnDelete">
+                ╳
+              </a>
+            </td>
+          </tr>
+        </div>
+      </div>
+      </tbody>
+    </table>
+
+    <a th:href="@{/api/admin/showAddQuestion(questionnaire_id=${completedUpdateQuestionnaire.getUpdatedQuestionnaire().getId()})}"
+       class="btn btn-primary btn-sm my-1 col-3">
+      Добавить новый вопрос
+    </a>
+    <br>
+    <button type="submit" class="btn my-5 btn-success col-6">Сохранить</button>
+  </form>
+
+</div>
+
+</body>
+
+</html>

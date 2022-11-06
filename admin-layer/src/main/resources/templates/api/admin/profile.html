@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <title>Профиль</title>
+    <meta http-equiv="Content-Type"/>
+    <meta charset="UTF-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous"/>
+    <link th:href="@{/styles/style.css}" rel="stylesheet" />
+</head>
+
+<body>
+<div class="container" id="profileActions">
+    <form class="logoutForm" th:action="@{/logout}" method="post">
+      <span>
+        Вы: <span th:text="${admin.getName() + ' ' + admin.getSurname()}"></span>
+        <span sec:authentication="principal.authorities"></span>
+        <button type="submit" class="btn btn-outline-dark m-md-2 btn-sm">Выход</button>
+      </span>
+    </form>
+
+    <hr/>
+    <h2>Доступные действия</h2>
+    <hr/>
+    <br/>
+    <a th:href="@{/api/user/showAllAvailableQuestionnaires}"
+       class="btn-sm mb-3">
+        Посмотреть доступные анкеты
+    </a>
+    <br/>
+    <a th:href="@{/api/admin/questionnaires}"
+       class="btn-sm mb-3">
+        Показать все анкеты для редактирования
+    </a>
+    <br/>
+    <a th:href="@{/api/admin/showAddQuestionnaire}"
+       class="btn-sm mb-3">
+        Добавить новую анкету
+    </a>
+    <br/>
+    <a th:href="@{/api/admin/showAllQuestionnairesStatistic}"
+       class="btn-sm mb-3">
+        Отчеты по пройденным анкетам
+    </a>
+
+</div>
+</body>
+</html>

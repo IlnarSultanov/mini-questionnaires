@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <title>Добавление новой анкеты</title>
+  <meta http-equiv="Content-Type"/>
+  <meta charset="UTF-8"/>
+
+  <!--   Using bootstrap CSS CDN Remote Link -->
+  <link rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous"/>
+  <link th:href="@{/styles/style.css}" rel="stylesheet" />
+</head>
+
+<body>
+<div class="container">
+  <a th:href="@{/api/admin/profile}"
+     class="btn btn-secondary btn-outline-dark mt-2 pl-4 pr-4">
+    ← В профиль
+  </a>
+  <hr/>
+  <h3 id="centeredContent">Добавление нового вопроса в анкету
+    "<span th:text="${createQuestionnairePartsDto.createQuestionnaireDto.title}"></span>"</h3>
+  <hr/>
+  <form th:action="@{/api/admin/saveQuestionnaire}" th:object="${createQuestionnairePartsDto}"
+        method="POST" id="centered">
+
+    <input th:if="${!createQuestionnairePartsDto.isQuestionnaireTitleFixed}" type="text"
+           required="required" th:field="*{createQuestionnaireDto.title}"
+           class="form-control mb-md-2 col-6" placeholder="Название анкеты"/>
+    <input th:if="${createQuestionnairePartsDto.isQuestionnaireTitleFixed}" type="text"
+           readonly="readonly" required="required" th:field="*{createQuestionnaireDto.title}"
+           class="form-control mb-md-2 col-6" placeholder="Название анкеты"/>
+    <p th:if="${#fields.hasErrors('createQuestionnaireDto.title')}"
+       th:errorclass="errorInput" th:errors="*{createQuestionnaireDto.title}">Invalid title</p>
+    <div th:if="${#fields.hasErrors('global')}">
+      <p th:each="err : ${#fields.errors('global')}"
+         th:text="${err}" class="globalErrorInput">Global error</p>
+    </div>
+    <input type="hidden" required="required" th:field="*{isQuestionnaireTitleFixed}"
+           class="form-control mb-md-2 col-6" placeholder="Название анкеты"/>
+    <br/>
+
+    <label for="questionText">Новый вопрос</label>
+    <br/>
+    <input id="questionText" type="text" required="required" th:field="*{createQuestionDto.questionText}"
+           class="form-control mb-md-2 col-6" placeholder="Текст вопроса"/>
+    <p th:if="${#fields.hasErrors('createQuestionDto.questionText')}"
+       th:errorclass="errorInput" th:errors="*{createQuestionDto.questionText}">Invalid questionText</p>
+
+    <select class="form-control mb-md-2 col-6" required="required" th:field="*{createQuestionDto.numberOfChoices}">
+      <option value="" disabled="disabled" selected="selected">Тип ответа</option>
+      <option th:each="choices : ${numberOfChoices}"
+              th:value="${choices}" th:text="${choices.getTranslation()}"></option>
+    </select>
+
+    <select class="form-control mb-md-2 col-6" required="required" th:field="*{createQuestionDto.numberOfAnswers}">
+      <option value="" disabled="disabled" selected="selected">Вариантов ответа на вопрос</option>
+      <option th:each="answers : ${numberOfAnswers}"
+              th:value="${answers}" th:text="${answers}"></option>
+    </select>
+
+
+    <table th:if="${isAvailableToEnterAnswers}" class="table table-bordered table-striped col-6">
+      <tbody>
+      <tr th:each="number : ${selectedNumberOfAnswers}">
+        <td>
+          <label for="newAnswer">Ответ №<span th:text="${number + 1}"></span></label>
+          <br/>
+          <input id="newAnswer" type="text" required="required" th:field="*{createAnswerForQuestionDto.answerText}"
+                 class="form-control mb-md-2 col-12" placeholder="Текст ответа"/>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <button th:if="${!isAvailableToEnterAnswers}" type="submit" class="btn btn-info m-3 col-6">Продолжить</button>
+    <button th:if="${isAvailableToEnterAnswers}" type="submit" class="btn btn-primary m-3 col-6">Сохранить вопрос</button>
+    <a th:if="${createQuestionnairePartsDto.isQuestionnaireTitleFixed && !isAvailableToEnterAnswers}"
+       th:href="@{/api/admin/questionnaires}" type="submit" class="btn btn-outline-success mt-mb-6 col-6">Сохранить анкету</a>
+  </form>
+</div>
+</body>
+</html>
